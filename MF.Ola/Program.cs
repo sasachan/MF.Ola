@@ -26,7 +26,7 @@ services.AddCors(o => o.AddPolicy("MyPolicy", builder =>
            .AllowAnyMethod()
            .AllowAnyHeader();
 }));
-services.ConfigureJWT(true, "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAg86Ip9LrmEQmGHUFtJNLsY1iWEbK/uyYxrpcrrrnqk93nsLYV7EWGPGsNDE2z9pd1vSM66ENy0wN0PaiOVqBiLlUR5e3m3Ga6OXDscRyIeY8h93eWfLxfMRSas0OduWWInpqg0sChAZBFYQe0nWt6JgaCRkHHMlugH5wZb7L0wvRFz/8Q/kCVUMks0G+NPQwk8SFPolzpa00KkUnCKefBeBXFotP87QASzqyKRjChqZ4nkRIWwiGvX7r9CLGYeUxL09+uKFSc1IycuHYXNTp/jL/JMrhGQRosr322ivPMHVpErqu8lwtB+mcYKgeJwLoP5croYJgvaeg0vWHqq+TxQIDAQAB");
+services.ConfigureJWT(Configuration, true, "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAg86Ip9LrmEQmGHUFtJNLsY1iWEbK/uyYxrpcrrrnqk93nsLYV7EWGPGsNDE2z9pd1vSM66ENy0wN0PaiOVqBiLlUR5e3m3Ga6OXDscRyIeY8h93eWfLxfMRSas0OduWWInpqg0sChAZBFYQe0nWt6JgaCRkHHMlugH5wZb7L0wvRFz/8Q/kCVUMks0G+NPQwk8SFPolzpa00KkUnCKefBeBXFotP87QASzqyKRjChqZ4nkRIWwiGvX7r9CLGYeUxL09+uKFSc1IycuHYXNTp/jL/JMrhGQRosr322ivPMHVpErqu8lwtB+mcYKgeJwLoP5croYJgvaeg0vWHqq+TxQIDAQAB");
 
 services.AddSwaggerGen(c =>
 {

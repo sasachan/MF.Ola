@@ -57,7 +57,7 @@ namespace MyWebApi.Authentication
             return IssuerSigningKey;
         }
 
-        public static void ConfigureJWT(this IServiceCollection services, bool IsDevelopment, string publicKeyJWT)
+        public static void ConfigureJWT(this IServiceCollection services, IConfiguration configuration, bool IsDevelopment, string publicKeyJWT)
         {
             services.AddTransient<IClaimsTransformation, ClaimsTransformer>();
 
@@ -76,9 +76,9 @@ namespace MyWebApi.Authentication
                 {
                     ValidateAudience = false,
                     ValidateIssuer = true,
-                    ValidIssuers = new[] { "http://localhost:8080/realms/MyRealm" },
+                    ValidIssuers = new[] { $"{configuration["Identity:Endpoint"]}/realms/{configuration["Identity:Realms"]}" },
                     ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = BuildRSAKey(publicKeyJWT),
+                    IssuerSigningKey = BuildRSAKey(configuration["Identity:PublicKeyJWT"]),
                     ValidateLifetime = true
                 };
 
@@ -92,19 +92,6 @@ namespace MyWebApi.Authentication
                     {
                         Console.WriteLine("User successfully authenticated");
                         return Task.CompletedTask;
-                    },
-                    OnAuthenticationFailed = c =>
-                    {
-                        c.NoResult();
-
-                        c.Response.StatusCode = 500;
-                        c.Response.ContentType = "text/plain";
-
-                        if (IsDevelopment)
-                        {
-                            return c.Response.WriteAsync(c.Exception.ToString());
-                        }
-                        return c.Response.WriteAsync("An error occured processing your authentication.");
                     }
                 };
 
