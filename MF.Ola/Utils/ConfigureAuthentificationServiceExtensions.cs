@@ -35,8 +35,7 @@ namespace MyWebApi.Authentication
 
             AuthenticationBuilder.AddJwtBearer(o =>
             {
-                #region == JWT Token Validation ===
-
+                o.Audience = configuration["Identity:Audience"];
                 o.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateAudience = true,
