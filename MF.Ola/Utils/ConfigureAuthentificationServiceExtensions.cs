@@ -1,13 +1,11 @@
-﻿using System;
-using System.Linq;
-using System.Security.Cryptography;
-using Microsoft.AspNetCore.Authentication;
+﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using System.Security.Cryptography;
 
 namespace MyWebApi.Authentication
 {
-    public static class ConfigureAuthentificationServiceExtensions
+    public static class ConfigureAuthenticationServiceExtensions
     {
         private static RsaSecurityKey BuildRSAKey(string publicKeyJWT)
         {
@@ -41,28 +39,13 @@ namespace MyWebApi.Authentication
 
                 o.TokenValidationParameters = new TokenValidationParameters
                 {
-                    ValidateAudience = false,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
                     ValidateIssuer = true,
                     ValidIssuers = new[] { $"{configuration["Identity:Endpoint"]}/realms/{configuration["Identity:Realms"]}" },
-                    ValidateIssuerSigningKey = true,
                     IssuerSigningKey = BuildRSAKey(configuration["Identity:PublicKeyJWT"]),
-                    ValidateLifetime = true
                 };
-
-                #endregion == JWT Token Validation ===
-
-                #region === Event Authentification Handlers ===
-
-                o.Events = new JwtBearerEvents()
-                {
-                    OnTokenValidated = c =>
-                    {
-                        Console.WriteLine("User successfully authenticated");
-                        return Task.CompletedTask;
-                    }
-                };
-
-                #endregion === Event Authentification Handlers ===
             });
         }
     }
