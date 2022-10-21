@@ -1,52 +1,12 @@
-﻿using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
-using System.Security.Claims;
 using System.Security.Cryptography;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 
 namespace MyWebApi.Authentication
 {
-    /// <summary>
-    /// Used to get the role within the claims structure used by keycloak, then it adds the role(s) in the ClaimsItentity of ClaimsPrincipal.Identity
-    /// </summary>
-    public class ClaimsTransformer : IClaimsTransformation
-    {
-        private readonly IConfiguration _configuration;
-
-        public ClaimsTransformer(IConfiguration configuration)
-        {
-            _configuration = configuration;
-        }
-
-        public Task<ClaimsPrincipal> TransformAsync(ClaimsPrincipal principal)
-        {
-            ClaimsIdentity claimsIdentity = (ClaimsIdentity)principal.Identity;
-
-            // flatten resource_access because Microsoft identity model doesn't support nested claims
-            // by map it to Microsoft identity model, because automatic JWT bearer token mapping already processed here
-            if (claimsIdentity.IsAuthenticated && claimsIdentity.HasClaim((claim) => claim.Type == "resource_access"))
-            {
-                var userRole = claimsIdentity.FindFirst((claim) => claim.Type == "resource_access");
-
-                var content = Newtonsoft.Json.Linq.JObject.Parse(userRole.Value);
-
-                foreach (var role in content[_configuration["Identity:ClientApp"]]["roles"])
-                {
-                    claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, role.ToString()));
-                }
-            }
-
-            return Task.FromResult(principal);
-        }
-    }
-
     public static class ConfigureAuthentificationServiceExtensions
     {
         private static RsaSecurityKey BuildRSAKey(string publicKeyJWT)
@@ -64,7 +24,7 @@ namespace MyWebApi.Authentication
             return IssuerSigningKey;
         }
 
-        public static void ConfigureJWT(this IServiceCollection services, IConfiguration configuration, bool IsDevelopment, string publicKeyJWT)
+        public static void ConfigureJWT(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddTransient<IClaimsTransformation, ClaimsTransformer>();
 
