@@ -18,6 +18,13 @@ namespace MyWebApi.Authentication
     /// </summary>
     public class ClaimsTransformer : IClaimsTransformation
     {
+        private readonly IConfiguration _configuration;
+
+        public ClaimsTransformer(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+
         public Task<ClaimsPrincipal> TransformAsync(ClaimsPrincipal principal)
         {
             ClaimsIdentity claimsIdentity = (ClaimsIdentity)principal.Identity;
@@ -30,7 +37,7 @@ namespace MyWebApi.Authentication
 
                 var content = Newtonsoft.Json.Linq.JObject.Parse(userRole.Value);
 
-                foreach (var role in content["MyApp"]["roles"])
+                foreach (var role in content[_configuration["Identity:ClientApp"]]["roles"])
                 {
                     claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, role.ToString()));
                 }
